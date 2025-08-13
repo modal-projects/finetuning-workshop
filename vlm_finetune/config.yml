@@ -2,7 +2,7 @@ base_model: Qwen/Qwen2.5-VL-7B-Instruct
 processor_type: AutoProcessor
 
 # these 3 lines are needed for now to handle vision chat templates w images
-skip_prepare_dataset: false
+skip_prepare_dataset: true
 remove_unused_columns: false
 sample_packing: false
 
@@ -11,8 +11,8 @@ datasets:
   - path: HuggingFaceH4/llava-instruct-mix-vsft
     type: chat_template
     split: train[:1%]
-    field_messages: messages_vsft
-    field_images: images_vsft
+    field_messages: messages
+    # field_images: images_vsft
 #   - path: /data/train.messages.jsonl
 #     type: chat_template
 #     field_messages: messages
@@ -26,9 +26,9 @@ datasets:
 #     type: chat_template
 #     field_messages: messages
 #     field_images: images
-dataset_prepared_path: /data/last_run_prepared
+dataset_prepared_path: ./last_run_prepared
 val_set_size: 0.0
-output_dir: /checkpoints/lora-out
+output_dir: /checkpoints/vlm-lora-out
 
 adapter: lora
 lora_model_dir:
@@ -53,7 +53,7 @@ num_epochs: 1
 optimizer: adamw_bnb_8bit
 lr_scheduler: cosine
 learning_rate: 0.0002
-train_on_inputs: true
+# train_on_inputs: true
 
 bf16: true
 fp16:

@@ -8,19 +8,16 @@ app = modal.App("axolotl-vlm-finetune")
 CKPT_VOLUME_DIR = Path("/checkpoints")
 DATA_VOLUME_DIR = Path("/data")
 
-LORA_OUTPUT_DIR = CKPT_VOLUME_DIR / "lora-out"
-MERGED_OUTPUT_DIR = CKPT_VOLUME_DIR / "merged-out"
+LORA_OUTPUT_DIR = CKPT_VOLUME_DIR / "vlm-lora-out"
+MERGED_OUTPUT_DIR = CKPT_VOLUME_DIR / "vlm-merged-out"
 
 
 @app.function(
     image=axolotl_image,
     gpu="H100",
     secrets=[modal.Secret.from_name("huggingface-secret")],
-    volumes={
-        CKPT_VOLUME_DIR.as_posix(): checkpoints_volume,
-        DATA_VOLUME_DIR.as_posix(): data_volume
-    },
-    timeout=4 * 60 * 60, # 4 hours
+    volumes={CKPT_VOLUME_DIR.as_posix(): checkpoints_volume, DATA_VOLUME_DIR.as_posix(): data_volume},
+    timeout=4 * 60 * 60,  # 4 hours
 )
 def train():
     import subprocess
