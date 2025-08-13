@@ -5,4 +5,4 @@ Axolotl vs Unsloth (2025-08-13 summary)
 - `axolotl` has better multi-GPU support, but is lower performance (especially when `lora_dropout` is non-zero).
 
 Details:
-- Fine-tune Meta-Llama-3.1-8B with a custom chat template
+- Fine-tune base model Meta-Llama-3.1-8B to be an Instruct model with Alpaca SFT dataset
