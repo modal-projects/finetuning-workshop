@@ -8,6 +8,17 @@ dataset_prepared_path: last_run_prepared
 special_tokens:
   pad_token: <|end_of_text|>
 
+
+adapter: lora
+lora_model_dir:
+lora_r: 32
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target_linear: true
+lora_modules_to_save:
+  - embed_tokens
+  - lm_head
+
 fsdp_version: 2
 fsdp_config:
   offload_params: false
@@ -17,10 +28,10 @@ fsdp_config:
   reshard_after_forward: true
 
 datasets:
-  - path: tatsu-lab/alpaca
+  - path: yahma/alpaca-cleaned
     type: alpaca
 
-output_dir: /outputs/ndp-out/
+output_dir: /checkpoints/lora-out/
 
 sequence_len: 2048
 sample_packing: true

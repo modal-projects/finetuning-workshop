@@ -98,6 +98,7 @@ def train():
         max_seq_length=max_seq_length,
         packing=False,  # Can make training 5x faster for short sequences.
         args=SFTConfig(
+            disable_tqdm=True,
             per_device_train_batch_size=32,  # Let's change this to higher.
             gradient_accumulation_steps=1,
             warmup_steps=5,

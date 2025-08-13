@@ -1,4 +1,11 @@
+"""
+We can launch a training run on all the configs.
+
+modal run -m axolotl_sft_multigpu.main
+"""
+
 from pathlib import Path
+from datetime import datetime
 
 import modal
 
@@ -13,7 +20,7 @@ axolotl_image = (
         )
     )
     .entrypoint([])
-    .add_local_file(Path(__file__).parent / "config.yml", "/root/config.yml")
+    .add_local_dir(Path(__file__).parent / "configs", "/root/configs")
 )
 
 app = modal.App(
@@ -22,7 +29,7 @@ app = modal.App(
 )
 
 hf_cache_volume = modal.Volume.from_name("axolotl-huggingface-cache", create_if_missing=True)
-checkpoints_volume = modal.Volume.from_name("axolotl-vlm-finetune-checkpoints", create_if_missing=True)
+checkpoints_volume = modal.Volume.from_name("axolotl-sft-multigpu-checkpoints", create_if_missing=True)
 
 
 @app.function(
@@ -34,7 +41,21 @@ checkpoints_volume = modal.Volume.from_name("axolotl-vlm-finetune-checkpoints", 
     },
     timeout=4 * 60 * 60,  # 4 hours
 )
-def train():
+def train(config: str, output_dir: str):
     import subprocess
 
-    subprocess.run("axolotl train /root/config.yml", shell=True)
+    subprocess.run(
+        f"axolotl train /root/configs/{config} --output-dir /checkpoints/{output_dir}", shell=True, check=True
+    )
+
+
+@app.local_entrypoint()
+def main():
+    datestring = datetime.now().strftime("%Y%m%d-%H%M%S")
+    handles = [
+        train.spawn("config.yml", output_dir=datestring + "-out"),
+        train.spawn("config-lora.yml", output_dir=datestring + "-out-lora"),
+        train.spawn("config-lora-faster.yml", output_dir=datestring + "-out-lora-faster"),
+    ]
+    for handle in handles:
+        handle.get()
