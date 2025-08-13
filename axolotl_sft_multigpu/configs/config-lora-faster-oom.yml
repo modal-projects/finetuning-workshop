@@ -43,7 +43,7 @@ sample_packing: true
 flash_attention: true
 
 gradient_accumulation_steps: 1
-micro_batch_size: 4
+micro_batch_size: 32
 num_epochs: 2
 optimizer: adamw_torch_fused
 lr_scheduler: constant_with_warmup
