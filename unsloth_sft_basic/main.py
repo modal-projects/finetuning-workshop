@@ -1,7 +1,7 @@
 """
 Let's make sure we can install Unsloth and download a model to train.
 
-Just folloiwng a notebook here: https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Llama3.1_(8B)-Alpaca.ipynb#scrollTo=95_Nn-89DhsL
+Just following a notebook here: https://colab.research.google.com/github/unslothai/notebooks/blob/main/nb/Llama3.1_(8B)-Alpaca.ipynb#scrollTo=95_Nn-89DhsL
 
 We can also experiment with different batch sizes here.
 """

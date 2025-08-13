@@ -53,9 +53,13 @@ def train(config: str, output_dir: str):
 def main():
     datestring = datetime.now().strftime("%Y%m%d-%H%M%S")
     handles = [
-        train.spawn("config.yml", output_dir=datestring + "-out"),
+        train.spawn("config-fft.yml", output_dir=datestring + "-out"),
         train.spawn("config-lora.yml", output_dir=datestring + "-out-lora"),
         train.spawn("config-lora-faster.yml", output_dir=datestring + "-out-lora-faster"),
+        train.spawn("config-lora-faster-oom.yml", output_dir=datestring + "-out-lora-faster-oom"),
     ]
     for handle in handles:
-        handle.get()
+        try:
+            handle.get()
+        except Exception as e:
+            print("Training failed: ", e)

@@ -8,13 +8,26 @@ dataset_prepared_path: last_run_prepared
 special_tokens:
   pad_token: <|end_of_text|>
 
+
+adapter: lora
+lora_model_dir:
+lora_r: 32
+lora_alpha: 16
+lora_dropout: 0
+lora_target_linear: true
+lora_modules_to_save:
+  - embed_tokens
+  - lm_head
+
+# These make lora training 2x faster.
+lora_mlp_kernel: true
+lora_qkv_kernel: true
+lora_o_kernel: true
+
 fsdp_version: 2
 fsdp_config:
   offload_params: false
-  # Avoid NCCL hangs
-  # Requires post-processing of checkpoints to merge the shards.
-  # axolotl merge-sharded-fsdp-weights --checkpoint_dir ...
-  state_dict_type: SHARDED_STATE_DICT
+  state_dict_type: FULL_STATE_DICT
   auto_wrap_policy: TRANSFORMER_BASED_WRAP
   transformer_layer_cls_to_wrap: LlamaDecoderLayer
   reshard_after_forward: true
@@ -23,7 +36,7 @@ datasets:
   - path: yahma/alpaca-cleaned
     type: alpaca
 
-output_dir: /checkpoints/out/
+output_dir: /checkpoints/lora-faster-out/
 
 sequence_len: 2048
 sample_packing: true
