@@ -2,17 +2,9 @@ from pathlib import Path
 
 import modal
 
-CONFIG_FILE_PATH = Path("/config.yml")
-
 axolotl_image = (
-    modal.Image.from_registry("axolotlai/axolotl:main-20250813-py3.11-cu126-2.6.0")
-    .pip_install(
-        "huggingface_hub",
-        "hf-transfer",
-        "wandb",
-        "fastapi",
-        "pydantic",
-    )
+    modal.Image.from_registry("axolotlai/axolotl:main-20250812-py3.11-cu126-2.7.1")
+    .pip_install("huggingface_hub", "hf-transfer", "wandb", "fastapi", "pydantic")
     .env(
         dict(
             HF_HUB_ENABLE_HF_TRANSFER="1",
@@ -21,11 +13,11 @@ axolotl_image = (
         )
     )
     .entrypoint([])
-    .add_local_file(Path(__file__).parent / "config.yml", CONFIG_FILE_PATH.as_posix())
+    .add_local_file(Path(__file__).parent / "config.yml", "/root/config.yml")
 )
 
 app = modal.App(
-    "axolotl-vlm-finetune",
+    "axolotl-sft-multigpu-lora",
     secrets=[modal.Secret.from_name("huggingface-secret")],
 )
 
@@ -35,7 +27,7 @@ checkpoints_volume = modal.Volume.from_name("axolotl-vlm-finetune-checkpoints", 
 
 @app.function(
     image=axolotl_image,
-    gpu="H100",
+    gpu="H100:4",
     volumes={
         "/root/.cache/huggingface": hf_cache_volume,
         "/checkpoints": checkpoints_volume,
@@ -45,4 +37,4 @@ checkpoints_volume = modal.Volume.from_name("axolotl-vlm-finetune-checkpoints", 
 def train():
     import subprocess
 
-    subprocess.run(f"axolotl train {CONFIG_FILE_PATH.as_posix()}", shell=True)
+    subprocess.run("axolotl train /root/config.yml", shell=True)
