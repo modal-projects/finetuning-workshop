@@ -8,3 +8,5 @@ Why Unsloth?
 - `axolotl` is higher compatibility, but lower performance.
 - `unsloth` is a more realistic "start-from-scratch" demo - I haven't used it before!
 
+Details:
+- Fine-tune Meta-Llama-3.1-8B with a custom chat template
